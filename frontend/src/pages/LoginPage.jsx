@@ -10,7 +10,7 @@ export const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("");
+      navigate("/tasks");
     }
   }, [isAuthenticated, navigate]);
 

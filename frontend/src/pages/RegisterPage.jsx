@@ -1,10 +1,33 @@
-import { Link } from "react-router";
-import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "../hooks/useForm";
+import { useAuth } from "../hooks/useAuth";
+import { useEffect } from "react";
 
 export const RegisterPage = () => {
   // TODO: Integrar lógica de registro aquí
+  const { signup, isAuthenticated, errors: registerErrors } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/tasks");
+    }
+  }, [isAuthenticated, navigate]);
+
   // TODO: Implementar useForm para el manejo del formulario
+  const { formState, handleChange } = useForm({
+    username: "",
+    email: "",
+    password: "",
+    name: "",
+    lastname: "",
+  });
+
   // TODO: Implementar función handleSubmit
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    signup(formState);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
@@ -14,13 +37,17 @@ export const RegisterPage = () => {
         </h2>
 
         {/* TODO: Mostrar este div cuando haya error */}
-        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
-          <p className="text-sm">
-            Error al crear la cuenta. Intenta nuevamente.
-          </p>
-        </div>
+        {registerErrors.length > 0 && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+            {registerErrors.map((error, i) => (
+              <p key={i} className="text-sm">
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
 
-        <form onSubmit={(event) => {}}>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -32,6 +59,8 @@ export const RegisterPage = () => {
               type="text"
               id="username"
               name="username"
+              value={formState.username}
+              onChange={handleChange}
               placeholder="Elige un nombre de usuario"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
@@ -49,6 +78,8 @@ export const RegisterPage = () => {
               type="email"
               id="email"
               name="email"
+              value={formState.email}
+              onChange={handleChange}
               placeholder="tu@email.com"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
@@ -66,6 +97,8 @@ export const RegisterPage = () => {
               type="password"
               id="password"
               name="password"
+              value={formState.password}
+              onChange={handleChange}
               placeholder="Crea una contraseña segura"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
@@ -83,6 +116,8 @@ export const RegisterPage = () => {
               type="text"
               id="name"
               name="name"
+              value={formState.name}
+              onChange={handleChange}
               placeholder="Tu nombre"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
@@ -100,6 +135,8 @@ export const RegisterPage = () => {
               type="text"
               id="lastname"
               name="lastname"
+              value={formState.lastname}
+              onChange={handleChange}
               placeholder="Tu apellido"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
