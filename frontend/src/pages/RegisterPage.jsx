@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { useForm } from "react-hook-form";
 
 export const RegisterPage = () => {
   // TODO: Integrar lógica de registro aquí

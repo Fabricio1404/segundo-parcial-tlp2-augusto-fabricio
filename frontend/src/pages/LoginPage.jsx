@@ -1,9 +1,30 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "../hooks/useForm";
+import { useAuth } from "../hooks/useAuth";
+import { useEffect } from "react";
 
 export const LoginPage = () => {
   // TODO: Integrar lógica de autenticación aquí
+  const { signin, errors: signinErrors, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("");
+    }
+  }, [isAuthenticated, navigate]);
+
   // TODO: Implementar useForm para el manejo del formulario
+  const { username, password, handleChange, formState } = useForm({
+    username: "",
+    password: "",
+  });
+
   // TODO: Implementar función handleSubmit
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    signin(formState);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
@@ -14,13 +35,17 @@ export const LoginPage = () => {
         </h2>
 
         {/* TODO: Mostrar este div cuando haya error */}
-        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
-          <p className="text-sm">
-            Credenciales incorrectas. Intenta nuevamente.
-          </p>
-        </div>
+        {signinErrors.length > 0 && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+            {signinErrors.map((error, i) => (
+              <p key={i} className="text-sm">
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
 
-        <form onSubmit={(event) => {}}>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -32,6 +57,8 @@ export const LoginPage = () => {
               type="text"
               id="username"
               name="username"
+              value={username}
+              onChange={handleChange}
               placeholder="Ingresa tu usuario"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -49,6 +76,8 @@ export const LoginPage = () => {
               type="password"
               id="password"
               name="password"
+              value={password}
+              onChange={handleChange}
               placeholder="Ingresa tu contraseña"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
